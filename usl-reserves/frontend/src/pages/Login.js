@@ -31,14 +31,16 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post(LOGIN_URL,
-                JSON.stringify({idnum, pass}),
-                {
-                    headers: { 'Content-Type': 'application/json' },
-                    withCredentials: true
-                }
-            );
-            console.log(JSON.stringify(response?.data))
+            const response = await fetch('http://localhost:2301/api/login', {
+                method: 'POST',
+                headers:{
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    idnum,
+                    pass,
+                }),
+            })
             
             const accessToken = response?.data?.accessToken
             const roles = response?.data?.roles
