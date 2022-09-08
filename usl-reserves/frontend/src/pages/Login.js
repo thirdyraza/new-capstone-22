@@ -1,9 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import useAuth from '../hooks/useAuth';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-
-import axios from '../api/axios'
-const LOGIN_URL = '/auth'
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Login = () => {
     const { setAuth } = useAuth();
@@ -40,15 +37,23 @@ const Login = () => {
                     idnum,
                     pass,
                 }),
+                withCredentials: true
             })
             
-            const accessToken = response?.data?.accessToken
-            const roles = response?.data?.roles
-
-            setAuth({ idnum, pass, roles, accessToken})
-            setIdnum('')
-            setPass('')
-            navigate(from, { replace:true })
+            const data = await response.json()
+            if(data.status === 'success'){
+                if(data.user){
+                    const roles = response?.data?.roles
+                    console.log('fetch from mongodb success')
+                    setAuth({ idnum, pass, roles })
+                    setIdnum('')
+                    setPass('')
+                    navigate(from, { replace:true })
+                }
+            } else {
+                console.log('error connecting to mongodb')
+            }
+            
         } catch(err) {
             if (!err?.response) {
                 setErrMsg('No Server Response');
@@ -87,7 +92,7 @@ const Login = () => {
                             value={pass}
                             required
                         />
-                        <button>Sign In</button>
+                        <input type="submit" value="SIGN IN" />
                     </form>
                 </section>
     );
